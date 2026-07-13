@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>{{ property.type|upper }} - {{ property.deal_type|upper }}</h2>
+<p><strong>ფასი:</strong> {{ property.price }} $</p>
+<p><strong>ფართობი:</strong> {{ property.area_sqm }} კვ.მ</p>
+<p><strong>ოთახები:</strong> {{ property.rooms }}</p>
+<p><strong>მისამართი:</strong> {{ property.city }}, {{ property.address }}</p>
+{% if property.lat %}
+    <p>📍 <strong>კოორდინატები (OSM):</strong> {{ property.lat }}, {{ property.lon }}</p>
+{% endif %}
+<p><strong>აღწერა:</strong> {{ property.description }}</p>
+
+<h3>🖼️ სურათები:</h3>
+<div class="images-gallery">
+    {% for img in property.images %}
+        <img src="{{ img.image_url }}" width="200" style="margin: 5px;">
+    {% endfor %}
+</div>
+
+<hr>
+<h3>📞 დაუკავშირდით მფლობელს</h3>
+<form method="POST">
+    <input type="text" name="name" placeholder="თქვენი სახელი" required><br><br>
+    <input type="text" name="phone" placeholder="ტელეფონი" required><br><br>
+    <textarea name="message" placeholder="შეტყობინება..." required></textarea><br><br>
+    <button type="submit">გაგზავნა</button>
+</form>
+{% endblock %}

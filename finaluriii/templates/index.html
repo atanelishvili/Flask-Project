@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+{% block content %}
+<div style="text-align: center; margin-bottom: 30px;">
+    <h1 style="color: #2d3748; font-weight: 800;">უძრავი ქონება</h1>
+    <p style="color: #718096;">იპოვეთ თქვენი ოცნების სახლი მარტივად</p>
+</div>
+
+
+<form method="GET" action="{{ url_for('properties.index') }}" class="search-form">
+    <input type="text" name="city" placeholder="📍 ქალაქი (მაგ. თბილისი)" value="{{ search_params.get('city', '') }}">
+    
+    <select name="type">
+        <option value="">🏢 ტიპი (ყველა)</option>
+        <option value="apartment" {% if search_params.get('type') == 'apartment' %}selected{% endif %}>ბინა</option>
+        <option value="house" {% if search_params.get('type') == 'house' %}selected{% endif %}>სახლი</option>
+        <option value="office" {% if search_params.get('type') == 'office' %}selected{% endif %}>ოფისი</option>
+        <option value="land" {% if search_params.get('type') == 'land' %}selected{% endif %}>მიწა</option>
+    </select>
+    
+    <select name="deal_type">
+        <option value="">🤝 გარიგება (ყველა)</option>
+        <option value="sell" {% if search_params.get('deal_type') == 'sell' %}selected{% endif %}>იყიდება</option>
+        <option value="rent" {% if search_params.get('deal_type') == 'rent' %}selected{% endif %}>ქირავდება</option>
+    </select>
+    
+    <input type="number" name="min_price" placeholder="💵 მინ. ფასი" value="{{ search_params.get('min_price', '') }}">
+    <input type="number" name="max_price" placeholder="💵 მაქს. ფასი" value="{{ search_params.get('max_price', '') }}">
+    <input type="number" name="rooms" placeholder="🚪 ოთახები" value="{{ search_params.get('rooms', '') }}">
+    
+    <button type="submit">🔍 ძებნა</button>
+</form>
+
+
+<div style="display: flex; justify-content: flex-end; margin-bottom: 20px;">
+    <form method="GET" action="{{ url_for('properties.index') }}" id="sortForm">
+        
+        <input type="hidden" name="city" value="{{ search_params.get('city', '') }}">
+        <input type="hidden" name="type" value="{{ search_params.get('type', '') }}">
+        <input type="hidden" name="deal_type" value="{{ search_params.get('deal_type', '') }}">
+        <input type="hidden" name="min_price" value="{{ search_params.get('min_price', '') }}">
+        <input type="hidden" name="max_price" value="{{ search_params.get('max_price', '') }}">
+        <input type="hidden" name="rooms" value="{{ search_params.get('rooms', '') }}">
+        
+        <select name="sort" onchange="this.form.submit()" style="padding: 8px 12px; border-radius: 6px; border: 1px solid #cbd5e0;">
+            <option value="date_desc" {% if search_params.get('sort') == 'date_desc' %}selected{% endif %}>📅 უახლესი</option>
+            <option value="price_asc" {% if search_params.get('sort') == 'price_asc' %}selected{% endif %}>📈 ფასი: ზრდადი</option>
+            <option value="price_desc" {% if search_params.get('sort') == 'price_desc' %}selected{% endif %}>📉 ფასი: კლებადი</option>
+        </select>
+    </form>
+</div>
+
+<h2>🏠 აქტუალური განცხადებები</h2>
+
+<div class="grid">
+    {% for prop in properties %}
+        <div class="card">
+            {% if prop.images %}
+                <img src="{{ prop.images[0].image_url }}" alt="Property">
+            {% else %}
+                <div style="height: 220px; background: #e2e8f0; display:flex; align-items:center; justify-content:center; color:#718096;">📷 სურათი არ არის</div>
+            {% endif %}
+            <div class="card-content">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <h3 style="margin: 0; color: #2b6cb0;">{{ "{:,.0f}".format(prop.price) }} $</h3>
+                    <span style="font-size: 0.8rem; padding: 3px 8px; background: #ebf8ff; color: #2b6cb0; border-radius: 12px; font-weight: bold;">
+                        {{ 'ქირავდება' if prop.deal_type == 'rent' else 'იყიდება' }}
+                    </span>
+                </div>
+                <p>🏢 <strong>ტიპი:</strong> {{ 'ბინა' if prop.type == 'apartment' else 'სახლი' if prop.type == 'house' else 'ოფისი' if prop.type == 'office' else 'მიწა' }}</p>
+                <p>📍 <strong>მდებარეობა:</strong> {{ prop.city }}, {{ prop.address }}</p>
+                <p>📐 <strong>ფართობი:</strong> {{ prop.area_sqm }} კვ.მ | 🚪 {{ prop.rooms }} ოთახი</p>
+                <p>👁️ ნახვები: {{ prop.views }}</p>
+                
+                <div class="actions">
+                    <a href="{{ url_for('properties.detail', id=prop.id) }}">ℹ️ დეტალურად</a>
+                    <a href="{{ url_for('properties.add_to_compare', id=prop.id) }}">📊 შედარება</a>
+                    <a href="{{ url_for('properties.toggle_favorite', id=prop.id) }}">
+                        {% if prop.id in user_fav_ids %}❤️ წაშლა{% else %}🤍 შენახვა{% endif %}
+                    </a>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+{% if not properties %}
+    <div style="text-align: center; padding: 40px; background: white; border-radius: 12px; border: 1px solid #e2e8f0; margin-top: 20px;">
+        <p style="color: #718096; font-size: 1.1rem;">😔 განცხადებები მოცემული პარამეტრებით ვერ მოიძებნა.</p>
+    </div>
+{% endif %}
+
+
+{% if pagination.pages > 1 %}
+<div class="pagination">
+    {% if pagination.has_prev %}
+        <a href="{{ url_for('properties.index', page=pagination.prev_num, **search_params) }}">◀ წინა</a>
+    {% endif %}
+    <span>გვერდი {{ pagination.page }} / {{ pagination.pages }}</span>
+    {% if pagination.has_next %}
+        <a href="{{ url_for('properties.index', page=pagination.next_num, **search_params) }}">შემდეგი ▶</a>
+    {% endif %}
+</div>
+{% endif %}
+{% endblock %}

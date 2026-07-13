@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% block content %}
+<div style="max-width: 1000px; margin: 0 auto;">
+    <h2>📊 ქონებების გვერდიგვერდ შედარება</h2>
+    
+    <div style="display: flex; justify-content: flex-end; margin-bottom: 20px;">
+        <a href="{{ url_for('properties.clear_compare') }}" class="btn" style="background-color: #e53e3e; text-decoration: none; padding: 8px 16px;">🧹 სიის გასუფთავება</a>
+    </div>
+
+    {% if properties %}
+        <div style="overflow-x: auto; background: white; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+            <table>
+                <thead>
+                    <tr>
+                        <th style="background: #2b6cb0; text-align: left;">მახასიათებლები</th>
+                        {% for p in properties %}
+                            <th style="background: #2b6cb0;">
+                                {{ 'ბინა' if p.type == 'apartment' else 'სახლი' }} ({{ p.price }} $)
+                            </th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>ფასი</strong></td>
+                        {% for p in properties %} <td style="color: #2b6cb0; font-weight: bold;">{{ p.price }} $</td> {% endfor %}
+                    </tr>
+                    <tr>
+                        <td><strong>გარიგება</strong></td>
+                        {% for p in properties %} <td>{{ 'ქირავდება' if p.deal_type == 'rent' else 'იყიდება' }}</td> {% endfor %}
+                    </tr>
+                    <tr>
+                        <td><strong>ფართობი</strong></td>
+                        {% for p in properties %} <td>{{ p.area_sqm }} კვ.მ</td> {% endfor %}
+                    </tr>
+                    <tr>
+                        <td><strong>ოთახები</strong></td>
+                        {% for p in properties %} <td>{{ p.rooms }} ოთახი</td> {% endfor %}
+                    </tr>
+                    <tr>
+                        <td><strong>მდებარეობა</strong></td>
+                        {% for p in properties %} <td>{{ p.city }}, {{ p.address }}</td> {% endfor %}
+                    </tr>
+                    <tr>
+                        <td><strong>მოქმედება</strong></td>
+                        {% for p in properties %}
+                            <td>
+                                <a href="{{ url_for('properties.detail', id=p.id) }}" style="color: #3182ce; text-decoration: none; font-weight: 600;">ნახვა</a> | 
+                                <a href="{{ url_for('properties.remove_from_compare', id=p.id) }}" style="color: #e53e3e; text-decoration: none;">წაშლა</a>
+                            </td>
+                        {% endfor %}
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div style="text-align: center; padding: 50px; background: white; border-radius: 12px; border: 1px solid #e2e8f0;">
+            <p style="color: #718096; font-size: 1.1rem;">📊 შედარების სია ცარიელია. დაამატეთ განცხადებები მთავარი გვერდიდან.</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

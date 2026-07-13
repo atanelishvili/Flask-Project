@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="form-container" style="max-width: 700px;">
+    <h2>➕ ახალი განცხადების განთავსება</h2>
+    <form method="POST" action="{{ url_for('properties.create') }}">
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+            <div class="form-group">
+                <label>ქონების ტიპი *</label>
+                <select name="type" required>
+                    <option value="apartment">ბინა</option>
+                    <option value="house">სახლი</option>
+                    <option value="office">ოფისი</option>
+                    <option value="land">მიწა</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>გარიგების ტიპი *</label>
+                <select name="deal_type" required>
+                    <option value="sell">იყიდება</option>
+                    <option value="rent">ქირავდება</option>
+                </select>
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px;">
+            <div class="form-group">
+                <label>ფასი ($) *</label>
+                <input type="number" name="price" required min="1">
+            </div>
+            <div class="form-group">
+                <label>ფართობი (კვ.მ) *</label>
+                <input type="number" name="area" required min="1">
+            </div>
+            <div class="form-group">
+                <label>ოთახები *</label>
+                <input type="number" name="rooms" required min="1">
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+            <div class="form-group">
+                <label>ქალაქი *</label>
+                <input type="text" name="city" placeholder="მაგ. თბილისი" required>
+            </div>
+            <div class="form-group">
+                <label>ზუსტი მისამართი ვალიდაციისთვის *</label>
+                <input type="text" name="address" placeholder="მაგ. რუსთაველის გამზირი 1" required>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>აღწერა</label>
+            <textarea name="description" rows="4" placeholder="დაწერეთ დეტალები ქონების შესახებ..."></textarea>
+        </div>
+
+        <div class="form-group" style="background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0;">
+            <label style="font-weight: bold; color: #2d3748; display: block; margin-bottom: 10px;">🖼️ სურათების URL ლინკები (მინიმუმ 3) *</label>
+            <input type="url" name="images" placeholder="სურათის ლინკი 1" required style="margin-bottom: 10px;">
+            <input type="url" name="images" placeholder="სურათის ლინკი 2" required style="margin-bottom: 10px;">
+            <input type="url" name="images" placeholder="სურათის ლინკი 3" required style="margin-bottom: 10px;">
+        </div>
+
+        <button type="submit" style="width: 100%; background: #2b6cb0; margin-top: 15px;">🚀 განცხადების გამოქვეყნება</button>
+    </form>
+</div>
+{% endblock %}

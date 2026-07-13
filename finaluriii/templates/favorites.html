@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>❤️ თქვენი შენახული განცხადებები</h2>
+
+<div class="grid">
+    {% for fav in favorites %}
+        {% set prop = fav.property %}
+        <div class="card">
+            {% if prop.images %}
+                <img src="{{ prop.images[0].image_url }}" alt="Property">
+            {% endif %}
+            <div class="card-content">
+                <h3>{{ prop.price }} $</h3>
+                <p>📍 {{ prop.city }}, {{ prop.address }}</p>
+                <div class="actions">
+                    <a href="{{ url_for('properties.detail', id=prop.id) }}">ℹ️ დეტალურად</a>
+                    <a href="{{ url_for('properties.toggle_favorite', id=prop.id) }}" style="color: #e53e3e;">❌ წაშლა</a>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div style="grid-column: 1/-1; text-align: center; padding: 40px; background: white; border-radius: 12px;">
+            <p style="color: #718096;">თქვენ ჯერ არცერთი განცხადება არ შეგინახავთ.</p>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}

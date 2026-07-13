@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ka">
+<head>
+    <meta charset="UTF-8">
+    <title>უძრავი ქონების პლატფორმა</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="{{ url_for('properties.index') }}">🏠 მთავარი</a> |
+            <a href="{{ url_for('properties.compare') }}">📊 შედარება</a>
+            {% if session.get('user_id') %}
+                | <a href="{{ url_for('properties.favorites') }}">❤️ სანიშნეები</a>
+                {% if session.get('role') in ['Owner', 'Agent'] %}
+                    | <a href="{{ url_for('properties.create') }}">➕ განცხადების დადება</a>
+                {% endif %}
+                | <span>👤 {{ session.get('username') }} ({{ session.get('role') }})</span>
+                | <a href="{{ url_for('auth.logout') }}">გამოსვლა</a>
+            {% else %}
+                | <a href="{{ url_for('auth.login') }}">შესვლა</a>
+                | <a href="{{ url_for('auth.register') }}">რეგისტრაცია</a>
+            {% endif %}
+        </nav>
+    </header>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="flash {{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <main>
+        {% block content %} {% endblock %}
+    </main>
+</body>
+</html>
